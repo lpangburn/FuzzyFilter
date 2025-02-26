@@ -4,7 +4,61 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<h1 class="display-4">Welcome</h1>
+<form method="post" enctype="multipart/form-data">
+    <div style="border: 1px solid grey">  
+        <!-- Upload a text file -->
+        <label for="file">Upload Text File:</label>
+        <br />
+        <input type="file" name="uploadFile" accept=".txt">
+        <br />
+        <br />
+        <!-- or text area for manual input -->
+        @Html.TextAreaFor(m => m.inputTextArea, new { @class = "form-control col-lg-6", placeholder = "Or paste text here" })
+        <br />
+        <label for="fuzzyPct">Select %:</label>
+        <input type="range" id="FuzzyPct" name="FuzzyPct" min="1" max="100" value="@Model.fuzzyPct" oninput="document.getElementById('fuzzyValue').innerText = this.value"><span id="fuzzyValue">@Model.fuzzyPct</span>
+        <p style="color:grey; font-size:small">100% = "Must be exact match"</p>
+        <br />
+        <button type="submit">Submit</button>
+        <br />
+    </div>
+</form>
+
+@if (Model.fuzzyResults.Count == 0)
+{
+    <pre>@Model.processedText</pre>
+}
+else
+{
+<div>
+    <pre>@Model.processedText</pre>
+
+    <div class="row" style="border-bottom-color: grey; border-bottom-style: solid; border-bottom-width: 2px">
+        <div class="column">
+            <h4>Name</h4>
+        </div>
+        <div class="column">
+            <h4>Potential Duplicates</h4>
+        </div>
+    </div>
+    @foreach (KeyValuePair<string, List<string>> dict in Model.fuzzyResults)
+    {
+        <div class="row" style="border-bottom-color: lightgray; border-bottom-style: solid; border-bottom-width: 1px">
+            <div class="column">
+                <h6>@dict.Key</h6>
+            </div>
+            <div class="column">
+                @foreach (string item in dict.Value)
+                {
+                    <p>@item</p>
+                }
+            </div>
+        </div>
+        
+    }
+    
 </div>
+
+}
+
