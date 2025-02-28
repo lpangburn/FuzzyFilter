@@ -38,32 +38,33 @@ namespace FuzzyFilter.Pages
                     {
                         inputStrings.Add(line);
                     }
-                }
-
-                inputStrings = normalizeInput(inputStrings);
-                int inputStringsLength = inputStrings.Count;
-                fuzzyResults = compareInputs(inputStrings);
-
-                processedText = String.Format("File uploaded successfully: {0}. Processed {1} lines.", uploadFile.FileName, inputStringsLength);
+                } 
+                processedText = String.Format("File uploaded successfully: {0}.", uploadFile.FileName);
             }
-
-
             //if there is no file, check for input in the text box
             else if(inputTextArea != null && inputTextArea.Length > 0)
             {
                 inputStrings = new List<string>(inputTextArea.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries));
-                inputStrings = normalizeInput(inputStrings);
-                int inputStringsLength = inputStrings.Count;
-                fuzzyResults = compareInputs(inputStrings);
-
-                processedText = String.Format("Text input processed successfully. Processed {0} lines.", inputStringsLength);
+                processedText = String.Format("Text input uploaded successfully.");
             }
-
-
             //else, there was no input
             else
             {
                 processedText = "Please select a file or input text to be processed.";
+                return Page();
+            }
+
+            //ensure there is something in the list and something to compare to
+            if(inputStrings.Count > 1)
+            {
+                inputStrings = normalizeInput(inputStrings);
+                int inputStringsLength = inputStrings.Count;
+                fuzzyResults = compareInputs(inputStrings);
+                processedText = String.Format("{0} Compared {1} lines.", processedText, inputStringsLength);
+            }
+            else
+            {
+                processedText = String.Format("{0} Not enough data for comparison.", processedText);
             }
             
             return Page();
